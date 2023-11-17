@@ -30,8 +30,5 @@ jobs:
           python-version: '3.11.6'
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       - name: Run tests
         run: python test.py
