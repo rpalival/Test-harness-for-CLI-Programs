@@ -35,10 +35,5 @@ jobs:
           chmod +x ./prog/wc.py
           chmod +x ./prog/csvsum.py
         
-      #- name: Run tests
-        #run: python test.py
-
-      - name: List files in prog directory
-        run: |
-          ls -l
-          ls -l ./prog
+      - name: Run tests
+        run: python test.py
