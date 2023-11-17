@@ -37,4 +37,8 @@ jobs:
         
       - name: Run tests
         run: python test.py
-        working-directory: .
+
+      - name: List files in prog directory
+        run: |
+          ls -l
+          ls -l ./prog
