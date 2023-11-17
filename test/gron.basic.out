@@ -1,0 +1,3 @@
+json = {};
+json.hello = "world";
+json.number = 123;
