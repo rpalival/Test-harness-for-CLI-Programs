@@ -5,7 +5,7 @@ import subprocess
 def run_test(prog_dir, prog, input_file, expected_output_file):
     with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
         # Run the program from the 'prog' directory
-        proc = subprocess.run([os.path.join(prog_dir, f'{prog}.py')], stdin=infile, capture_output=True, text=True)
+        proc = subprocess.run(['python3', os.path.join(prog_dir, f'{prog}.py')], stdin=infile, capture_output=True, text=True)
         output = proc.stdout.rstrip('\n')
         expected_output = expectedfile.read().rstrip('\n')
 
