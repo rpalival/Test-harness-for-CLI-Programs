@@ -23,12 +23,18 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+        
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.11.6'
-
-      # Runs a single command using the runners shell
+          
+      - name: Make script executable
+        run: |
+          chmod +x ./prog/gron.py
+          chmod +x ./prog/wc.py
+          chmod +x ./prog/csvsum.py
+        
       - name: Run tests
         run: python test.py
+        working-directory: .
