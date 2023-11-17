@@ -1,0 +1,5 @@
+json = {};
+json.str = "hello";
+json.num = 123;
+json.bool = true;
+json.null = null;
