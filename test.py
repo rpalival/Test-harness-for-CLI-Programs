@@ -38,7 +38,7 @@ def main():
                 flag_parts = flag_and_value.split('_')
                 if len(flag_parts) == 2:
                     flag, flag_value = flag_parts
-                    additional_args = [f'--{flag} ', flag_value]
+                    additional_args = [f'--{flag}', flag_value]
 
             input_file = os.path.join(test_dir, filename)
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
