@@ -4,18 +4,9 @@ import subprocess
 
 def run_test(prog_dir, prog, input_file, expected_output_file, additional_args=None):
     with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
-        #debug prints
-        if additional_args:
-            print("Debug: Additional args:", additional_args)
-        else:
-            print("Debug: No additional args")
-
         command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
         if additional_args:
             command.extend(additional_args)
-
-        # Debug print for the command
-        print("Debug: Command to run:", command)
 
         # Run the program from the 'prog' directory
         proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
@@ -42,7 +33,7 @@ def main():
             test_type = parts[1]  # Get the test type
             additional_args = None
 
-            if len(parts) > 4:
+            if len(parts) > 3:
                 flag_and_value = parts[2]
                 flag_parts = flag_and_value.split('_')
                 if len(flag_parts) == 2:
