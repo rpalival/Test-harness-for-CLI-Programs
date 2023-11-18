@@ -2,10 +2,14 @@
 import os
 import subprocess
 
-def run_test(prog_dir, prog, input_file, expected_output_file):
+def run_test(prog_dir, prog, input_file, expected_output_file, additional_args=None):
     with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
+        command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
+        if additional_args:
+            command.extend(additional_args)
+
         # Run the program from the 'prog' directory
-        proc = subprocess.run(['python3', os.path.join(prog_dir, f'{prog}.py')], stdin=infile, capture_output=True, text=True)
+        proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
         output = proc.stdout.rstrip('\n')
         expected_output = expectedfile.read().rstrip('\n')
 
@@ -26,13 +30,22 @@ def main():
         if filename.endswith('.in'):
             parts = filename.split('.')
             test_name = parts[0]  # Get the program name
-            test_type = '.'.join(parts[1:-1])  # Get the test type
+            test_type = parts[1]  # Get the test type
+            additional_args = None
+
+            if len(parts) > 4:
+                flag_and_value = parts[2]
+                flag_parts = flag_and_value.split('_')
+                if len(flag_parts) == 2:
+                    flag, flag_value = flag_parts
+                    additional_args = [f'--{flag}', flag_value]
+
             input_file = os.path.join(test_dir, filename)
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
 
             # Run test in STDIN mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file)
+            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file, additional_args)
             if not passed:
                 print(f"FAIL: {test_name} failed (TestResult.OutputMismatch)\n"
                       f"      expected:\n{expected_output}\n\n"
@@ -43,7 +56,7 @@ def main():
 
             # Run test in argument mode
             if os.path.exists(expected_arg_output_file):
-                passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file)
+                passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file, additional_args)
                 if not passed:
                     print(f"FAIL: {test_name} failed in argument mode (TestResult.OutputMismatch)\n"
                           f"      expected:\n{expected_output}\n\n"
