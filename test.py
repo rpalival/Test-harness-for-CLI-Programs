@@ -10,7 +10,7 @@ def run_test(prog_dir, prog, input_file, expected_output_file, additional_args=N
         elif additional_args:
             command.extend(additional_args)
 
-        #print(f"Running test with input: {input_file}, command: {command}")
+        print(f"Running test with input: {input_file}, command: {command}")
         # Run the program from the 'prog' directory
         proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
         output = proc.stdout.rstrip('\n')
