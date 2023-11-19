@@ -5,10 +5,12 @@ import subprocess
 def run_test(prog_dir, prog, input_file, expected_output_file, additional_args=None):
     with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
         command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
-        if additional_args:
+        if prog == 'wc':
+            command.append(input_file)
+        elif additional_args:
             command.extend(additional_args)
-            
-        print(f"Running test with input: {input_file}, command: {command}")
+
+        #print(f"Running test with input: {input_file}, command: {command}")
         # Run the program from the 'prog' directory
         proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
         output = proc.stdout.rstrip('\n')
