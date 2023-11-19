@@ -2,22 +2,34 @@
 import os
 import subprocess
 
-def run_test(prog_dir, prog, input_file, expected_output_file, additional_args=None):
-    with open(input_file, 'r') as infile, open(expected_output_file, 'r') as expectedfile:
-        command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
-        if prog == 'wc':
-            command.append(input_file)
-        elif additional_args:
-            command.extend(additional_args)
+def run_test(prog_dir, prog, input_file, expected_output_file, use_shell=False, additional_args=None):
+    with open(expected_output_file, 'r') as expectedfile:
+        if use_shell:
+            # Building the command to use shell piping
+            cat_command = f"cat {input_file} | python3 {os.path.join(prog_dir, f'{prog}.py')}"
+            if additional_args:
+                cat_command += ' ' + ' '.join(additional_args)
+            command = cat_command
+        else:
+            # Directly running the script with subprocess
+            command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
+            if prog == 'wc':
+                command.append(input_file)
+            elif additional_args:
+                command.extend(additional_args)
 
         print(f"Running test with input: {input_file}, command: {command}")
         # Run the program from the 'prog' directory
-        proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
+        if use_shell:
+            proc = subprocess.run(command, shell=True, capture_output=True, text=True)
+        else:
+            with open(input_file, 'r') as infile:
+                proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
+
         output = proc.stdout.rstrip('\n')
         expected_output = expectedfile.read().rstrip('\n')
 
         if output != expected_output or proc.returncode != 0:
-            # Additional debugging information
             return False, output, expected_output
 
     return True, None, None
@@ -47,10 +59,10 @@ def main():
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
 
-            # Run test in STDIN mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file, additional_args)
+            # Run test in STDIN/Shell mode
+            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file, False, additional_args)
             if not passed:
-                print(f"FAIL: {test_name} failed (TestResult.OutputMismatch)\n"
+                print(f"FAIL: {test_name} failed in file mode (TestResult.OutputMismatch)\n"
                       f"      expected:\n{expected_output}\n\n"
                       f"           got:\n{output}\n")
                 test_results['OutputMismatch'] += 1
@@ -58,17 +70,16 @@ def main():
                 test_results['OK'] += 1
 
             # Run test in argument mode
-            if os.path.exists(expected_arg_output_file):
-                passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file, additional_args)
-                if not passed:
-                    print(f"FAIL: {test_name} failed in argument mode (TestResult.OutputMismatch)\n"
-                          f"      expected:\n{expected_output}\n\n"
-                          f"           got:\n{output}\n")
-                    test_results['OutputMismatch'] += 1
-                else:
-                    test_results['OK'] += 1
+            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file, True, additional_args)
+            if not passed:
+                print(f"FAIL: {test_name} failed in argument/shell mode (TestResult.OutputMismatch)\n"
+                        f"      expected:\n{expected_output}\n\n"
+                        f"           got:\n{output}\n")
+                test_results['OutputMismatch'] += 1
+            else:
+                test_results['OK'] += 1
 
-            test_results['total'] += 1
+            test_results['total'] += 2
 
     # Print summary
     print(f"\nOK: {test_results['OK']}\noutput mismatch: {test_results['OutputMismatch']}\ntotal: {test_results['total']}")
