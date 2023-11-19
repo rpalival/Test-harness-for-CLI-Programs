@@ -55,12 +55,15 @@ def main():
                     flag, flag_value = flag_parts
                     additional_args = [f'--{flag}', flag_value]
 
-            input_file = os.path.join(test_dir, filename)
+            input_files = filename.replace('.in', '').split('_')[1:]  # Assuming format like 'wc_file1_file2.in'
+            input_paths = [os.path.join(test_dir, f"{file}.txt") for file in input_files]
+            input_args = ' '.join(input_paths)  # Create a single string with all file paths
+
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
 
             # Run test in STDIN/Shell mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file, False, additional_args)
+            passed, output, expected_output = run_test(prog_dir, test_name, input_args, expected_output_file, False, additional_args)
             if not passed:
                 print(f"FAIL: {test_name} failed in file mode (TestResult.OutputMismatch)\n"
                       f"      expected:\n{expected_output}\n\n"
@@ -70,7 +73,7 @@ def main():
                 test_results['OK'] += 1
 
             # Run test in argument mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file, True, additional_args)
+            passed, output, expected_output = run_test(prog_dir, test_name, input_args, expected_arg_output_file, True, additional_args)
             if not passed:
                 print(f"FAIL: {test_name} failed in argument/shell mode (TestResult.OutputMismatch)\n"
                         f"      expected:\n{expected_output}\n\n"
