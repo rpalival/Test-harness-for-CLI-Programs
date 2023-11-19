@@ -1,0 +1,5 @@
+json = {};
+json.message = "Hello, world! \ud83d\udc4b";
+json.user = {};
+json.user.name = "John Doe";
+json.user.status = "Happy \ud83d\ude0a";
