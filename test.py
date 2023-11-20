@@ -59,15 +59,14 @@ def main():
             input_files = None
             additional_args = []
 
-            if test_name == 'wc' and '_' in parts[1]:
-                file_parts = parts[1].split('_')
-                flagvalue = file_parts[0]  # Extracting flag values
-                input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
+            input_files = os.path.join(test_dir, filename)
 
-                additional_args = [f'-{flag}' for flag in flagvalue]  # Process flags
+            if test_name == 'wc':
+                # Extract flag value from filename
+                if '_' in test_type:
+                    _, flagvalue = test_type.split('_')
+                    additional_args = [f'-{flag}' for flag in flagvalue]  # Process flags
 
-            else:
-                input_files = os.path.join(test_dir, filename)
 
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
