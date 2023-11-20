@@ -57,7 +57,8 @@ def main():
             test_type = parts[1]
 
             additional_args = []
-
+            input_files = os.path.join(test_dir, filename)
+            
             if test_name == 'wc':
                 file_parts = parts[1].split('_')
 
