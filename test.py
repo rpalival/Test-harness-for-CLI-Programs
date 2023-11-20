@@ -5,7 +5,7 @@ import subprocess
 def run_test(prog_dir, prog, input_files, expected_output_file, use_shell=False, additional_args=None):
     with open(expected_output_file, 'r') as expectedfile:
         if use_shell:
-            # Building the command to use shell piping
+            # Handle shell mode with single or multiple files
             if isinstance(input_files, list):
                 cat_command = f"cat {' '.join(input_files)} | python3 {os.path.join(prog_dir, f'{prog}.py')}"
             else:
@@ -31,7 +31,7 @@ def run_test(prog_dir, prog, input_files, expected_output_file, use_shell=False,
             if isinstance(input_files, list):
                 proc = subprocess.run(command, capture_output=True, text=True)
             else:
-                with open(input_file, 'r') as infile:
+                with open(input_files, 'r') as infile:
                     proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
 
         output = proc.stdout.rstrip('\n')
@@ -41,6 +41,7 @@ def run_test(prog_dir, prog, input_files, expected_output_file, use_shell=False,
             return False, output, expected_output
 
     return True, None, None
+
 
 def main():
     # Define paths to the 'test' and 'prog' directories
