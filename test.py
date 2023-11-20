@@ -45,8 +45,27 @@ def main():
         if filename.endswith('.in'):
             parts = filename.split('.')
             test_name = parts[0]  # Get the program name
-            test_type = parts[1]  # Get the test type
-            additional_args = None
+
+            input_files = None
+            additional_args = []
+
+            if test_name == 'wc' and '_' in parts[1]:
+                file_parts = parts[1].split('_')
+                flagvalue = file_parts[0]  # Extracting flag values
+                input_files = [os.path.join(test_dir, f'{name}.in') for name in file_parts[1:]]  # Extracting file names
+
+                if 'l' in flagvalue:
+                    additional_args.append('-l')
+                if 'w' in flagvalue:
+                    additional_args.append('-w')
+                if 'c' in flagvalue:
+                    additional_args.append('-c')
+            else:
+                input_files = os.path.join(test_dir, filename)
+
+            expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
+            expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
+
 
             if len(parts) > 3:
                 flag_and_value = parts[2]
@@ -55,12 +74,11 @@ def main():
                     flag, flag_value = flag_parts
                     additional_args = [f'--{flag}', flag_value]
 
-            input_file = os.path.join(test_dir, filename)
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
 
             # Run test in STDIN/Shell mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_output_file, False, additional_args)
+            passed, output, expected_output = run_test(prog_dir, test_name, input_files, expected_output_file, False, additional_args)
             if not passed:
                 print(f"FAIL: {test_name} failed in file mode (TestResult.OutputMismatch)\n"
                       f"      expected:\n{expected_output}\n\n"
@@ -70,7 +88,7 @@ def main():
                 test_results['OK'] += 1
 
             # Run test in argument mode
-            passed, output, expected_output = run_test(prog_dir, test_name, input_file, expected_arg_output_file, True, additional_args)
+            passed, output, expected_output = run_test(prog_dir, test_name, input_files, expected_arg_output_file, True, additional_args)
             if not passed:
                 print(f"FAIL: {test_name} failed in argument/shell mode (TestResult.OutputMismatch)\n"
                         f"      expected:\n{expected_output}\n\n"
