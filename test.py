@@ -56,28 +56,18 @@ def main():
             test_name = parts[0]  # Get the program name
             test_type = parts[1]
 
+            input_files = None
             additional_args = []
-            input_files = []
 
-            if test_name == 'wc':
+            if test_name == 'wc' and '_' in parts[1]:
                 file_parts = parts[1].split('_')
+                flagvalue = file_parts[0]  # Extracting flag values
+                input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
 
-                if file_parts[0].startswith('flag'):
-                    flagvalue = file_parts[0][4:]
-                    input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
-                    #print(input_files)
-                    #print(flagvalue)
-                else:
-                    input_files = [os.path.join(test_dir, name) for name in file_parts]  # All parts are file names
-                    #print(input_files)
-                if 'l' in flagvalue:
-                    additional_args.append('-l')
-                if 'w' in flagvalue:
-                    additional_args.append('-w')
-                if 'c' in flagvalue:
-                    additional_args.append('-c')
+                additional_args = [f'-{flag}' for flag in flagvalue]  # Process flags
+
             else:
-                input_files = [os.path.join(test_dir, filename)]
+                input_files = os.path.join(test_dir, filename)
 
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
@@ -90,6 +80,8 @@ def main():
                     flag, flag_value = flag_parts
                     additional_args = [f'--{flag}', flag_value]
 
+            expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
+            expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
 
             # Run test in STDIN/Shell mode
             passed, output, expected_output = run_test(prog_dir, test_name, input_files, expected_output_file, False, additional_args)
