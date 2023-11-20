@@ -62,6 +62,8 @@ def main():
                 file_parts = parts[1].split('_')
                 flagvalue = file_parts[0]  # Extracting flag values
                 input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
+                print(input_files)
+                print(flagvalue)
 
                 if 'l' in flagvalue:
                     additional_args.append('-l')
