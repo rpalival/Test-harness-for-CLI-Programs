@@ -7,9 +7,14 @@
 **GitHub URL:** [https://github.com/rpalival/cs515-project1](https://github.com/rpalival/cs515-project1)  
 **Time Taken:** 40 hours  
 
+NOTE: as for my 3rd program i chose a utility that loads a comma-separated values (CSV) file and sums particular columns.
 ## 3. Testing Approach
 
 ### Overview of Test Harness
+SO for first extension: wc.py with mutiple test files, its not getting triggered by my test harness but the manual testing of my program with the file sample and sample2 gives the correct output. This was the most difficult aspect i came across and wasn't able to test it from harness. but manually testing provided the result.
+to test it manually run the command
+chmod +x wc.py
+./wc.py sample sample2
 
 - **Locating Test Files**:
   - Scans the `test/` directory for input files named `PROG.NAME.in` and corresponding expected output files named `PROG.NAME.out`.
@@ -66,6 +71,9 @@
   - `-c` or `--chars`: Count only characters.
 - **Testing**:
   - Verified flags' functionality through various test cases.
+command: ./wc.py sample -l for only lines
+NOTE: make sure the file is names is in this syntax: 
+wc.testname_flagvalue.in
 
 ### 2. Multiple File Extension in `wc.py`
 
@@ -80,5 +88,6 @@
   - Integrated `--obj` flag for customizable base object names.
 - **Testing**:
   - Ensured functionality through targeted script testing.
-
+NOTE: for this make sure the file name is in this format:
+gron.testname.obj_flagvalue.in
 ---
