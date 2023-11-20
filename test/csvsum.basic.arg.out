@@ -1,0 +1,4 @@
+Name: {'unique_values': 7, 'most_common': 'Alice', 'frequency_of_most_common': 1, 'all_frequencies': {'Alice': 1, 'Bob': 1, 'Charlie': 1, 'Diana': 1, 'Eve': 1, 'Frank': 1, 'Grace': 1}}
+Age: 228.0
+Department: {'unique_values': 3, 'most_common': 'Engineering', 'frequency_of_most_common': 3, 'all_frequencies': {'Engineering': 3, 'Marketing': 2, 'Design': 2}}
+Salary: 407000.0

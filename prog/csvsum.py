@@ -51,19 +51,25 @@ def process_csv(reader, target_column=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Sum and concatenate CSV file columns.")
-    parser.add_argument('filename', help="CSV file to process")
+    parser.add_argument('filename', nargs='?', default='-', help="CSV file to process")
     parser.add_argument('--column', help="Specific column to process", default=None)
     args = parser.parse_args()
 
     try:
-        if args.filename.endswith(".csv"):
-            with open(args.filename, mode='r', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                results = process_csv(reader, args.column)
-                for header, result in results.items():
-                    print(f"{header}: {result}")
+        # Determine the input source (file or stdin)
+        if args.filename == '-' or not args.filename.endswith(".csv"):
+            # Read from stdin
+            file = sys.stdin
         else:
-            raise ValueError("The file is not a CSV")
+            # Open the specified file
+            file = open(args.filename, mode='r', encoding='utf-8')
+
+        with file:
+            reader = csv.reader(file)
+            results = process_csv(reader, args.column)
+            for header, result in results.items():
+                print(f"{header}: {result}")
+
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
