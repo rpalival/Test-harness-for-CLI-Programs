@@ -45,6 +45,7 @@ def main():
         if filename.endswith('.in'):
             parts = filename.split('.')
             test_name = parts[0]  # Get the program name
+            test_type = parts[1]
 
             input_files = None
             additional_args = []
