@@ -58,12 +58,13 @@ def main():
 
             additional_args = []
 
-            if test_name == 'wc' and '_' in parts[1]:
+            if test_name == 'wc':
                 file_parts = parts[1].split('_')
-                flagvalue = file_parts[0]  # Extracting flag values
-                input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
-                print(input_files)
-                print(flagvalue)
+                if file_parts[0].startswith('flag'):
+                    flagvalue = file_parts[0][4:]
+                    input_files = [os.path.join(test_dir, name) for name in file_parts[1:]]  # Extracting file names
+                #print(input_files)
+                #print(flagvalue)
 
                 if 'l' in flagvalue:
                     additional_args.append('-l')
@@ -73,7 +74,7 @@ def main():
                     additional_args.append('-c')
 
             else:
-                input_files = os.path.join(test_dir, filename)
+                input_files = [os.path.join(test_dir, name) for name in file_parts]
 
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
