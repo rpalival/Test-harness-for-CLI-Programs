@@ -76,7 +76,7 @@ def main():
                 else:
                     input_files = os.path.join(test_dir, filename)
             else:
-                input_files = [os.path.join(test_dir, filename)]
+                input_files = os.path.join(test_dir, filename)
 
             expected_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.out')
             expected_arg_output_file = os.path.join(test_dir, f'{test_name}.{test_type}.arg.out')
