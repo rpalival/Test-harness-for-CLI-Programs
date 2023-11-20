@@ -2,29 +2,37 @@
 import os
 import subprocess
 
-def run_test(prog_dir, prog, input_file, expected_output_file, use_shell=False, additional_args=None):
+def run_test(prog_dir, prog, input_files, expected_output_file, use_shell=False, additional_args=None):
     with open(expected_output_file, 'r') as expectedfile:
         if use_shell:
             # Building the command to use shell piping
-            cat_command = f"cat {input_file} | python3 {os.path.join(prog_dir, f'{prog}.py')}"
+            if isinstance(input_files, list):
+                cat_command = f"cat {' '.join(input_files)} | python3 {os.path.join(prog_dir, f'{prog}.py')}"
+            else:
+                cat_command = f"cat {input_files} | python3 {os.path.join(prog_dir, f'{prog}.py')}"
             if additional_args:
                 cat_command += ' ' + ' '.join(additional_args)
             command = cat_command
         else:
             # Directly running the script with subprocess
             command = ['python3', os.path.join(prog_dir, f'{prog}.py')]
-            if prog == 'wc':
-                command.append(input_file)
-            elif additional_args:
+            if isinstance(input_files, list) and prog == 'wc':
+                command.extend(input_files)
+            elif not isinstance(input_files, list):
+                command.append(input_files)
+            if additional_args:
                 command.extend(additional_args)
 
-        print(f"Running test with input: {input_file}, command: {command}")
+        print(f"Running test with input: {input_files}, command: {command}")
         # Run the program from the 'prog' directory
         if use_shell:
             proc = subprocess.run(command, shell=True, capture_output=True, text=True)
         else:
-            with open(input_file, 'r') as infile:
-                proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
+            if isinstance(input_files, list):
+                proc = subprocess.run(command, capture_output=True, text=True)
+            else:
+                with open(input_file, 'r') as infile:
+                    proc = subprocess.run(command, stdin=infile, capture_output=True, text=True)
 
         output = proc.stdout.rstrip('\n')
         expected_output = expectedfile.read().rstrip('\n')
